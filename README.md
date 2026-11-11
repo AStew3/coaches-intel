@@ -1,6 +1,6 @@
-# Coaches Intel and Fair Catch
+# RecruitDirect and Fair Catch
 
-Install pages for the Coaches Intel and Fair Catch web apps.
+Install pages for the RecruitDirect and Fair Catch web apps.
 
-- Coaches Intel: https://astew3.github.io/coaches-intel/
+- RecruitDirect: https://astew3.github.io/coaches-intel/
 - Fair Catch: https://astew3.github.io/coaches-intel/fc/

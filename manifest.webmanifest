@@ -1,8 +1,8 @@
 {
   "id": "/coaches-intel/",
-  "name": "Coaches Intel",
-  "short_name": "Coaches Intel",
-  "description": "Coaches Intel: college football and basketball coach directory and recruiting outreach.",
+  "name": "RecruitDirect",
+  "short_name": "RecruitDirect",
+  "description": "RecruitDirect: reach every college football and basketball coach, one message away.",
   "start_url": "/coaches-intel/",
   "scope": "/coaches-intel/",
   "display": "standalone",
