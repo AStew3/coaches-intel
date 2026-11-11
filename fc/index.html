@@ -46,7 +46,9 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1
 (function () {
   var APP = 'https://script.google.com/macros/s/AKfycbzu8uAlONeYXlzi4Q4zBqguVye-GMZnhzJOAzeMFe6Y7R_ayAOUBxC-KTqw1f6yVVdkwg/exec?app=fc', KEY = 'inst.hide.fc';
   var fr = document.getElementById('app'), sp = document.getElementById('splash');
-  function load() { fr.src = APP + (APP.indexOf('?') < 0 ? '?' : '&') + 'shell=1&t=' + Date.now(); }
+  var SL = (location.search.match(/[?&]sl=([a-f0-9]{20,40})/) || [])[1] || '';
+  if (SL) try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  function load() { fr.src = APP + (APP.indexOf('?') < 0 ? '?' : '&') + 'shell=1' + (SL ? '&sl=' + SL : '') + '&t=' + Date.now(); SL = ''; }
   load();
   var ready = false;
   fr.addEventListener('load', function () { setTimeout(function () { if (!ready) { sp.style.opacity = 0; setTimeout(function () { sp.style.display = 'none'; }, 300); } }, 4000); });
