@@ -1,0 +1,30 @@
+{
+  "id": "/coaches-intel/",
+  "name": "Coaches Intel",
+  "short_name": "Coaches Intel",
+  "description": "Coaches Intel: college football and basketball coach directory and recruiting outreach.",
+  "start_url": "/coaches-intel/",
+  "scope": "/coaches-intel/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0C0E",
+  "theme_color": "#0B0C0E",
+  "icons": [
+    {
+      "src": "/coaches-intel/icons/ci-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/coaches-intel/icons/ci-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/coaches-intel/icons/ci-512m.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

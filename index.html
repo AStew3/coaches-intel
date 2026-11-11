@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Coaches Intel</title>
+<meta name="description" content="Coaches Intel: college football and basketball coach directory and recruiting outreach.">
+<meta name="theme-color" content="#0B0C0E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Coaches Intel">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/ci-192.png">
+<link rel="apple-touch-icon" href="icons/ci-180.png">
+<style>
+:root{--bg:#0B0C0E;--ink:#F2F4F0;--ink-2:#A9AEB5;--line:#2A2D33;--panel:#15171B;--acc:#C6F432}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+#app{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg);padding-top:env(safe-area-inset-top)}
+#splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);z-index:2;transition:opacity .3s}
+#splash img{width:64px;height:64px;border-radius:14px}
+#splash b{font:800 22px "Arial Narrow",system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase}
+#splash b span{color:var(--acc)}
+#splash .bar{width:150px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+#splash .bar i{display:block;height:100%;width:30%;background:var(--acc);animation:b 1.1s ease-in-out infinite}
+@keyframes b{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+#slow{display:none;color:var(--ink-2);font-size:13px;text-align:center;padding:0 24px}
+#slow a{color:var(--acc)}
+#inst{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:5;display:none;max-width:520px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+#instBody>b{display:block;font-size:16px;margin-bottom:4px}#inst li b{color:var(--ink)}
+#inst p{margin:0 0 10px;color:var(--ink-2);font-size:14px}
+#inst ol{margin:0 0 10px 18px;padding:0;color:var(--ink-2);font-size:14px}
+#inst .row{display:flex;gap:8px;flex-wrap:wrap}
+#inst button,#inst a.btn{flex:1;min-width:120px;font:700 14px system-ui,sans-serif;border-radius:10px;padding:12px;border:1px solid var(--line);background:none;color:var(--ink);text-align:center;text-decoration:none;cursor:pointer}
+#inst .go{background:var(--acc);color:#0B0C0E;border-color:var(--acc)}
+#inst .x{position:absolute;right:6px;top:4px;flex:none;min-width:0;border:0;padding:8px;font-size:20px;line-height:1}
+</style>
+</head>
+<body>
+<div id="splash"><img src="icons/ci-192.png" alt=""><b>Coaches <span>Intel</span></b><div class="bar"><i></i></div>
+<p id="slow">Taking a while? <a href="https://script.google.com/macros/s/AKfycbzu8uAlONeYXlzi4Q4zBqguVye-GMZnhzJOAzeMFe6Y7R_ayAOUBxC-KTqw1f6yVVdkwg/exec" rel="noopener">Open Coaches Intel directly</a></p></div>
+<iframe id="app" title="Coaches Intel" allow="clipboard-write; web-share; fullscreen; camera; microphone" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<div id="inst" role="dialog" aria-label="Install Coaches Intel"><button class="x" type="button" aria-label="Close">×</button><div id="instBody"></div></div>
+<script>
+(function () {
+  var APP = 'https://script.google.com/macros/s/AKfycbzu8uAlONeYXlzi4Q4zBqguVye-GMZnhzJOAzeMFe6Y7R_ayAOUBxC-KTqw1f6yVVdkwg/exec', KEY = 'inst.hide.ci';
+  var fr = document.getElementById('app'), sp = document.getElementById('splash');
+  function load() { fr.src = APP + (APP.indexOf('?') < 0 ? '?' : '&') + 'shell=1&t=' + Date.now(); }
+  load();
+  var ready = false;
+  fr.addEventListener('load', function () { setTimeout(function () { if (!ready) { sp.style.opacity = 0; setTimeout(function () { sp.style.display = 'none'; }, 300); } }, 4000); });
+  setTimeout(function () { if (!ready) document.getElementById('slow').style.display = 'block'; }, 15000);
+  window.addEventListener('message', function (e) {
+    if (!/^https:\/\/([a-z0-9-]+\.)*(google\.com|googleusercontent\.com)$/.test(e.origin)) return;
+    var d = e.data || {};
+    if (d.ciReady) { ready = true; sp.style.opacity = 0; setTimeout(function () { sp.style.display = 'none'; }, 300); }
+    if (d.ciNav) { sp.style.display = 'flex'; sp.style.opacity = 1; ready = false; load(); }
+    if (d.ciOpen && /^https:\/\//.test(d.ciOpen)) window.open(d.ciOpen, '_blank', 'noopener');
+    // keep the sign-in here, where Google Apps Script updates can't clear it
+    if (typeof d.ciSaveSess === 'string' && d.ciSaveSess.length < 1000) { try { if (d.ciSaveSess) localStorage.setItem('ci.sess', d.ciSaveSess); else localStorage.removeItem('ci.sess'); } catch (x) {} }
+    if (d.ciNeedSess && e.source) { var t = ''; try { t = localStorage.getItem('ci.sess') || ''; } catch (x) {} e.source.postMessage({ ciSess: t }, e.origin); }
+  });
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+  // install help
+  var ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1), android = /Android/.test(ua);
+  var standalone = navigator.standalone || matchMedia('(display-mode: standalone)').matches || /; wv\)|CoachesIntel|FairCatch/.test(ua);
+  var box = document.getElementById('inst'), body = document.getElementById('instBody'), deferred = null;
+  function hidden() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function close() { box.style.display = 'none'; try { localStorage.setItem(KEY, '1'); } catch (e) {} }
+  box.querySelector('.x').onclick = close;
+  function show(html) { if (standalone || hidden()) return; body.innerHTML = html; box.style.display = 'block'; var g = body.querySelector('.go'); if (g && deferred) g.onclick = function () { deferred.prompt(); deferred.userChoice.then(function () { deferred = null; close(); }); }; var n = body.querySelector('.later'); if (n) n.onclick = close; }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e;
+    show('<b>Install Coaches Intel</b><p>Put it on your home screen. It opens like an app, and you stay signed in.</p><div class="row"><button class="go" type="button">Install</button><a class="btn" href="CoachesIntel.apk" download>Android app file</a></div>'); });
+  window.addEventListener('appinstalled', close);
+  setTimeout(function () {
+    if (deferred || standalone) return;
+    if (ios) show('<b>Install Coaches Intel on this iPhone</b><ol><li>Tap the <b>Share</b> button in Safari.</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li></ol><div class="row"><button class="later" type="button">Got it</button></div>');
+    else if (android) show('<b>Install Coaches Intel</b><ol><li>Tap Chrome’s <b>⋮</b> menu.</li><li>Tap <b>Install app</b> or <b>Add to Home screen</b>.</li></ol><div class="row"><button class="later" type="button">Got it</button><a class="btn" href="CoachesIntel.apk" download>Android app file</a></div>');
+  }, 7000);
+})();
+</script>
+</body>
+</html>
