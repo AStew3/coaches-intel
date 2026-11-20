@@ -35,12 +35,16 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1
 #inst button,#inst a.btn{flex:1;min-width:120px;font:700 14px system-ui,sans-serif;border-radius:10px;padding:12px;border:1px solid var(--line);background:none;color:var(--ink);text-align:center;text-decoration:none;cursor:pointer}
 #inst .go{background:var(--acc);color:#0B0C0E;border-color:var(--acc)}
 #inst .x{position:absolute;right:6px;top:4px;flex:none;min-width:0;border:0;padding:8px;font-size:20px;line-height:1}
+#pa{position:fixed;left:10px;right:10px;top:calc(10px + env(safe-area-inset-top));z-index:6;display:none;max-width:520px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+#pa b{display:block;font-size:16px;margin-bottom:4px}#pa p{margin:0 0 10px;color:var(--ink-2);font-size:14px}#pa .row{display:flex;gap:8px}
+#pa button{flex:1;font:700 14px system-ui,sans-serif;border-radius:10px;padding:12px;border:1px solid var(--line);background:none;color:var(--ink);cursor:pointer}#pa .go{background:var(--acc);color:#0B0C0E;border-color:var(--acc)}
 </style>
 </head>
 <body>
 <div id="splash"><img src="icons/ci-192.png" alt=""><b>Recruit<span>Direct</span></b><div class="bar"><i></i></div>
 <p id="slow">Taking a while? <a href="https://script.google.com/macros/s/AKfycbzu8uAlONeYXlzi4Q4zBqguVye-GMZnhzJOAzeMFe6Y7R_ayAOUBxC-KTqw1f6yVVdkwg/exec" rel="noopener">Open RecruitDirect directly</a></p></div>
 <iframe id="app" title="RecruitDirect" allow="clipboard-write; web-share; fullscreen; camera; microphone" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<div id="pa" role="dialog" aria-label="Phone alerts"><b>Turn on phone alerts</b><p>Get an alert the moment a coach opens your email or wants to talk.</p><div class="row"><button class="go" type="button">Allow alerts</button><button class="no" type="button">Not now</button></div></div>
 <div id="inst" role="dialog" aria-label="Install RecruitDirect"><button class="x" type="button" aria-label="Close">×</button><div id="instBody"></div></div>
 <script>
 (function () {
@@ -61,8 +65,47 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1
     if (d.ciOpen && /^https:\/\//.test(d.ciOpen)) window.open(d.ciOpen, '_blank', 'noopener');
     // keep the sign-in here, where Google Apps Script updates can't clear it
     if (typeof d.ciSaveSess === 'string' && d.ciSaveSess.length < 1000) { try { if (d.ciSaveSess) localStorage.setItem('ci.sess', d.ciSaveSess); else localStorage.removeItem('ci.sess'); } catch (x) {} }
+    // phone alerts: the push subscription lives here, on the install page
+    if (d.ciPushQ && e.source) paState().then(function (s) { e.source.postMessage({ ciPushA: s }, e.origin); });
+    if (d.ciPushOn && e.source && typeof d.ciPushOn.key === 'string') paOn(d.ciPushOn.key, e.source, e.origin);
+    if (d.ciPushOff && e.source) paOff().then(function () { e.source.postMessage({ ciPushA: { ok: true, off: 1 } }, e.origin); });
     if (d.ciNeedSess && e.source) { var t = ''; try { t = localStorage.getItem('ci.sess') || ''; } catch (x) {} e.source.postMessage({ ciSess: t }, e.origin); }
   });
+  function paOk() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+  function paWhy() { var u = navigator.userAgent; return /; wv\)|CoachesIntel|FairCatch/.test(u) ? 'wv' : (/iPhone|iPad|iPod/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1)) ? 'ios' : 'no'; }
+  function paState() {
+    if (!paOk()) return Promise.resolve({ ok: false, why: paWhy() });
+    var late = new Promise(function (res) { setTimeout(function () { res(null); }, 3000); });
+    return Promise.race([navigator.serviceWorker.ready, late]).then(function (reg) { if (!reg) throw new Error('not ready'); return reg.pushManager.getSubscription(); })
+      .then(function (s) { return { ok: true, perm: Notification.permission, sub: s ? s.toJSON() : null }; })
+      .catch(function (x) { return { ok: false, why: 'no', err: String(x && x.message || x) }; });
+  }
+  function paKey(b) { b = b.replace(/-/g, '+').replace(/_/g, '/'); while (b.length % 4) b += '='; var r = atob(b), u = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) u[i] = r.charCodeAt(i); return u; }
+  function paSub(key) {
+    return navigator.serviceWorker.ready.then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (old) { return old ? old.unsubscribe() : true; })
+        .then(function () { return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: paKey(key) }); });
+    });
+  }
+  function paOn(key, src, origin) {
+    var reply = function (o) { src.postMessage({ ciPushA: o }, origin); }, card = document.getElementById('pa');
+    if (!paOk()) return reply({ ok: false, why: paWhy() });
+    var go = function () {
+      card.style.display = 'none';
+      Promise.resolve(Notification.permission === 'granted' ? 'granted' : Notification.requestPermission()).then(function (p) {
+        if (p !== 'granted') return reply({ ok: true, perm: p });
+        return paSub(key).then(function (s) { reply({ ok: true, perm: 'granted', sub: s.toJSON() }); });
+      }).catch(function (x) { reply({ ok: true, perm: Notification.permission, err: String(x && x.message || x) }); });
+    };
+    if (Notification.permission === 'granted') return go();
+    card.querySelector('.go').onclick = go;
+    card.querySelector('.no').onclick = function () { card.style.display = 'none'; reply({ ok: true, perm: Notification.permission }); };
+    card.style.display = 'block';
+  }
+  function paOff() {
+    if (!paOk()) return Promise.resolve();
+    return navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (s) { return s && s.unsubscribe(); }).catch(function () {});
+  }
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
   // install help
