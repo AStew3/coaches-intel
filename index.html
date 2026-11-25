@@ -19,7 +19,8 @@
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
 #app{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg);padding-top:env(safe-area-inset-top)}
 #splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);z-index:2;transition:opacity .3s}
-#splash img{width:64px;height:64px;border-radius:14px}
+#splash img{width:min(80vw,380px);height:auto;aspect-ratio:1830/1058;animation:rdGlow 1.5s ease-in-out infinite alternate}
+@keyframes rdGlow{from{filter:brightness(.9) saturate(1) drop-shadow(0 0 6px rgba(211,250,81,.25))}to{filter:brightness(1.3) saturate(1.3) drop-shadow(0 0 26px rgba(211,250,81,.75))}}
 #splash b{font:800 24px system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.01em}
 #splash b span{color:var(--acc)}
 #splash .bar{width:150px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
@@ -41,7 +42,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1
 </style>
 </head>
 <body>
-<div id="splash"><img src="icons/ci-192.png" alt=""><b>Recruit<span>Direct</span></b><div class="bar"><i></i></div>
+<div id="splash"><img src="icons/hs-splash.webp" alt="RecruitDirect"><b>Recruit<span>Direct</span></b><div class="bar"><i></i></div>
 <p id="slow">Taking a while? <a href="https://script.google.com/macros/s/AKfycbzu8uAlONeYXlzi4Q4zBqguVye-GMZnhzJOAzeMFe6Y7R_ayAOUBxC-KTqw1f6yVVdkwg/exec" rel="noopener">Open RecruitDirect directly</a></p></div>
 <iframe id="app" title="RecruitDirect" allow="clipboard-write; web-share; fullscreen; camera; microphone" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 <div id="pa" role="dialog" aria-label="Phone alerts"><b>Turn on phone alerts</b><p>Get an alert the moment a coach opens your email or wants to talk.</p><div class="row"><button class="go" type="button">Allow alerts</button><button class="no" type="button">Not now</button></div></div>
