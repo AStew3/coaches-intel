@@ -1,5 +1,5 @@
 // RecruitDirect / Fair Catch install shell: keeps the shell pages available; the apps themselves always load live.
-const C = 'ci-shell-9', FILES = ['./', './fc/', './icons/rd3-192.png', './icons/hs-splash.webp', './icons/fc-192.png'];
+const C = 'ci-shell-10', FILES = ['./', './fc/', './icons/rd4-192.png', './icons/hs-splash.webp', './icons/fc-192.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
@@ -18,7 +18,7 @@ self.addEventListener('push', e => {
       let a = (d && d.alerts) || [];
       if (!a.length) a = [{ title: 'RecruitDirect', body: 'News from a coach. Tap to see.', tag: 'ci-news' }];
       return Promise.all(a.slice(-3).map(x => self.registration.showNotification(x.title || 'RecruitDirect', {
-        body: x.body || '', tag: x.tag || ('ci-' + Date.now() + Math.random()), icon: 'icons/rd3-192.png', data: { url: './' }
+        body: x.body || '', tag: x.tag || ('ci-' + Date.now() + Math.random()), icon: 'icons/rd4-192.png', data: { url: './' }
       })));
     }));
 });
